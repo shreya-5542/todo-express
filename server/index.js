@@ -1,14 +1,17 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import { configDotenv } from 'dotenv';
+
 const app = express();
 
 app.use(express.urlencoded({ extended: true })); // use to collect form data from the client
 app.use(bodyParser.json()); // use to parse JSON bodies
+
+configDotenv();
+
 mongoose
-  .connect(
-    'mongodb+srv://shreyasavaliya2801:Shreya0801@cluster0.ja95ybi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-  )
+  .connect(process.env.MONGODB_URL)
   .then(() => {
     console.log('Database Connected Successfully!!');
   })
@@ -59,7 +62,7 @@ app.post('/todos', async (req, res) => {
       description,
     });
 
-    const savedTodo = await newTodo.save();
+    const savedTodo = await newTodo.save(); // save Todo data to DB
     console.log(savedTodo);
     res.status(201).json(savedTodo);
   } catch (err) {
@@ -87,10 +90,10 @@ app.put('/todos?id=:id', async (req, res) => {
 });
 
 // Delete a todo
-app.delete('/todos?id=:id', async (req, res) => {
+app.delete('/todos/:id', async (req, res) => {
   try {
     const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
-    console.log(deletedTodo)
+
     if (!deletedTodo) {
       res.status(404).send('Todo not found');
     } else {
