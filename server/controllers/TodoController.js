@@ -1,4 +1,4 @@
-import Todo from '../models/TodoSchema';
+import Todo from '../models/TodoSchema.js';
 
 class TodoController {
   // Method to get all todos
